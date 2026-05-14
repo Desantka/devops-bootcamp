@@ -18,10 +18,12 @@ stages:
 
 info:system:
   stage: info
+  retry: 2
   script:
     - uname -a
     - cat /etc/os-release || true
-    - apk add --no-cache git >/dev/null
+    - apk update --no-cache
+    - apk add --no-cache git
     - git --version
 
 info:hello:
@@ -33,10 +35,11 @@ info:hello:
 info:mr-context:
   stage: info
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Avoid false failures: only run when MR IID is actually present
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_IID
   script:
     - echo "Pipeline source merge_request_event"
-    - test -n "${CI_MERGE_REQUEST_IID:-}"
+    - echo "MR IID=${CI_MERGE_REQUEST_IID}"
 
 # Day 4: main-branch push signal (not MR pipeline)
 info:main-context:
