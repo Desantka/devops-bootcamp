@@ -1,0 +1,64 @@
+# Week 1 (Days 1-5): pipeline skeleton for GitLab.com SaaS runners
+# Docs: https://docs.gitlab.com/ee/ci/yaml/
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+variables:
+  GIT_DEPTH: "20"
+
+default:
+  image: alpine:3.20
+
+stages:
+  - info
+  - report
+
+info:system:
+  stage: info
+  script:
+    - uname -a
+    - cat /etc/os-release || true
+    - apk add --no-cache git >/dev/null
+    - git --version
+
+info:hello:
+  stage: info
+  script:
+    - sh scripts/hello.sh
+
+# Day 4: MR-only signal (runs in MR pipelines)
+info:mr-context:
+  stage: info
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  script:
+    - echo "Pipeline source merge_request_event"
+    - test -n "${CI_MERGE_REQUEST_IID:-}"
+
+# Day 4: main-branch push signal (not MR pipeline)
+info:main-context:
+  stage: info
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"
+  script:
+    - echo "Pipeline on default branch push"
+    - echo "branch=${CI_COMMIT_REF_NAME}"
+
+report:build_facts:
+  stage: report
+  script:
+    - mkdir -p build
+    - date -u +"%Y-%m-%dT%H:%MZ" > build/build-info.txt
+    - echo "commit_sha=${CI_COMMIT_SHA}" >> build/build-info.txt
+    - echo "short_sha=${CI_COMMIT_SHORT_SHA}" >> build/build-info.txt
+    - echo "branch=${CI_COMMIT_REF_NAME}" >> build/build-info.txt
+    - echo "pipeline_source=${CI_PIPELINE_SOURCE}" >> build/build-info.txt
+    - echo "mr_iid=${CI_MERGE_REQUEST_IID:-n/a}" >> build/build-info.txt
+    - cat build/build-info.txt
+  artifacts:
+    paths:
+      - build/build-info.txt
+    expire_in: 1 week
