@@ -71,3 +71,15 @@ info:env:
   script:
     - echo "BOOTCAMP_ENV=${BOOTCAMP_ENV}"
     - echo "BOOTCAMP_LOG_LEVEL=${BOOTCAMP_LOG_LEVEL}"
+info:cache_demo:
+  stage: info
+  cache:
+    key: bootcamp-cache-v1
+    paths:
+      - .cache/bootcamp/
+  script:
+    - mkdir -p .cache/bootcamp
+    - ls -la .cache/bootcamp || true
+    - test -f .cache/bootcamp/stamp.txt && echo "CACHE_HIT" || echo "CACHE_MISS"
+    - date -u > .cache/bootcamp/stamp.txt
+    - cat .cache/bootcamp/stamp.txt
