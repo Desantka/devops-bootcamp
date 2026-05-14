@@ -52,6 +52,7 @@ info:main-context:
     - echo "branch=${CI_COMMIT_REF_NAME}"
 
 report:build_facts:
+  needs: ["info:hello"]
   stage: report
   script:
     - mkdir -p build
