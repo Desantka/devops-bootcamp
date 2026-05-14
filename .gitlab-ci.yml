@@ -8,6 +8,7 @@ workflow:
 
 variables:
   GIT_DEPTH: "20"
+  BOOTCAMP_LOG_LEVEL: "info"
 
 default:
   image: alpine:3.20
@@ -65,3 +66,8 @@ report:build_facts:
     paths:
       - build/build-info.txt
     expire_in: 1 week
+info:env:
+  stage: info
+  script:
+    - echo "BOOTCAMP_ENV=${BOOTCAMP_ENV}"
+    - echo "BOOTCAMP_LOG_LEVEL=${BOOTCAMP_LOG_LEVEL}"
