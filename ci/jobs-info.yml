@@ -1,0 +1,49 @@
+info:system:
+  stage: info
+  retry: 2
+  script:
+    - uname -a
+    - cat /etc/os-release || true
+    - apk update --no-cache
+    - apk add --no-cache git
+    - git --version
+
+info:hello:
+  stage: info
+  script:
+    - sh scripts/hello.sh
+
+info:mr-context:
+  stage: info
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_IID
+  script:
+    - echo "Pipeline source merge_request_event"
+    - echo "MR IID=${CI_MERGE_REQUEST_IID}"
+
+info:main-context:
+  stage: info
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"
+  script:
+    - echo "Pipeline on default branch push"
+    - echo "branch=${CI_COMMIT_REF_NAME}"
+
+info:env:
+  stage: info
+  script:
+    - echo "BOOTCAMP_ENV=${BOOTCAMP_ENV}"
+    - echo "BOOTCAMP_LOG_LEVEL=${BOOTCAMP_LOG_LEVEL}"
+
+info:cache_demo:
+  stage: info
+  cache:
+    key: bootcamp-cache-v1
+    paths:
+      - .cache/bootcamp/
+  script:
+    - mkdir -p .cache/bootcamp
+    - ls -la .cache/bootcamp || true
+    - test -f .cache/bootcamp/stamp.txt && echo "CACHE_HIT" || echo "CACHE_MISS"
+    - date -u > .cache/bootcamp/stamp.txt
+    - cat .cache/bootcamp/stamp.txt

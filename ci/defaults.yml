@@ -1,0 +1,6 @@
+variables:
+  GIT_DEPTH: "20"
+  BOOTCAMP_LOG_LEVEL: "info"
+
+default:
+  image: alpine:3.20
