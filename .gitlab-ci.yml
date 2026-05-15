@@ -1,86 +1,14 @@
-# Week 1 (Days 1-5): pipeline skeleton for GitLab.com SaaS runners
-# Docs: https://docs.gitlab.com/ee/ci/yaml/
-
+# Root CI entry — orchestration only
 workflow:
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-variables:
-  GIT_DEPTH: "20"
-  BOOTCAMP_LOG_LEVEL: "info"
-
-default:
-  image: alpine:3.20
-
 stages:
   - info
   - report
 
-info:system:
-  stage: info
-  retry: 2
-  script:
-    - uname -a
-    - cat /etc/os-release || true
-    - apk update --no-cache
-    - apk add --no-cache git
-    - git --version
-
-info:hello:
-  stage: info
-  script:
-    - sh scripts/hello.sh
-
-# Day 4: MR-only signal (runs in MR pipelines)
-info:mr-context:
-  stage: info
-  rules:
-    # Avoid false failures: only run when MR IID is actually present
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_IID
-  script:
-    - echo "Pipeline source merge_request_event"
-    - echo "MR IID=${CI_MERGE_REQUEST_IID}"
-
-# Day 4: main-branch push signal (not MR pipeline)
-info:main-context:
-  stage: info
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "push"
-  script:
-    - echo "Pipeline on default branch push"
-    - echo "branch=${CI_COMMIT_REF_NAME}"
-
-report:build_facts:
-  needs: ["info:hello"]
-  stage: report
-  script:
-    - mkdir -p build
-    - date -u +"%Y-%m-%dT%H:%MZ" > build/build-info.txt
-    - echo "commit_sha=${CI_COMMIT_SHA}" >> build/build-info.txt
-    - echo "short_sha=${CI_COMMIT_SHORT_SHA}" >> build/build-info.txt
-    - echo "branch=${CI_COMMIT_REF_NAME}" >> build/build-info.txt
-    - echo "pipeline_source=${CI_PIPELINE_SOURCE}" >> build/build-info.txt
-    - echo "mr_iid=${CI_MERGE_REQUEST_IID:-n/a}" >> build/build-info.txt
-    - cat build/build-info.txt
-  artifacts:
-    paths:
-      - build/build-info.txt
-    expire_in: 1 week
-info:env:
-  stage: info
-  script:
-    - echo "BOOTCAMP_ENV=${BOOTCAMP_ENV}"
-    - echo "BOOTCAMP_LOG_LEVEL=${BOOTCAMP_LOG_LEVEL}"
-info:cache_demo:
-  stage: info
-  cache:
-    key: bootcamp-cache-v1
-    paths:
-      - .cache/bootcamp/
-  script:
-    - mkdir -p .cache/bootcamp
-    - ls -la .cache/bootcamp || true
-    - test -f .cache/bootcamp/stamp.txt && echo "CACHE_HIT" || echo "CACHE_MISS"
-    - date -u > .cache/bootcamp/stamp.txt
-    - cat .cache/bootcamp/stamp.txt
+include:
+  - local: 'ci/defaults.yml'
+  - local: 'ci/jobs-info.yml'
+  - local: 'ci/jobs-report.yml'
