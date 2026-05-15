@@ -1,0 +1,13 @@
+info:system:
+  stage: info
+  retry: 2
+  script:
+    - uname -a
+    # ... як у тебе зараз ...
+
+info:hello:
+  stage: info
+  script:
+    - sh scripts/hello.sh
+
+# info:mr-context, info:main-context, info:env, info:cache_demo — теж сюди

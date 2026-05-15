@@ -1,0 +1,9 @@
+report:build_facts:
+  needs: ["info:hello"]
+  stage: report
+  script:
+    # ... як у тебе зараз ...
+  artifacts:
+    paths:
+      - build/build-info.txt
+    expire_in: 1 week
