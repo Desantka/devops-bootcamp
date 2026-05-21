@@ -7,8 +7,13 @@ workflow:
 stages:
   - info
   - report
+  - build
 
 include:
   - local: 'ci/defaults.yml'
   - local: 'ci/jobs-info.yml'
   - local: 'ci/jobs-report.yml'
+  - local: 'ci/jobs-docker.yml'
+
+
+
