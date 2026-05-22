@@ -11,6 +11,7 @@
 - Різна поведінка пайплайна для **Merge Request** і для гілки **`main`**.
 - Скрипт `scripts/hello.sh`, який запускається в CI.
 - Шаблон MR: `.gitlab/merge_request_templates/Default.md`.
+- test
 
 ## Швидкий старт (якщо клонуєш на нову машину)
 
