@@ -1,5 +1,9 @@
 docker:build_push:
   stage: build
+  rules:
+    - changes:
+        - Dockerfile
+        - site/**/*
   image: docker:24
   services:
     - docker:24-dind
