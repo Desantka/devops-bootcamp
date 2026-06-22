@@ -17,3 +17,5 @@ spec:
           image: registry.gitlab.com/liana-group/liana-project:4f7abdb9
           ports:
             - containerPort: 80
+      imagePullSecrets:
+        - name: gitlab-regcred
