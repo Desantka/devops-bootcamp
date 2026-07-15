@@ -1,0 +1,12 @@
+k8s:validate:
+  stage: validate
+  image: bitnami/kubectl:1.30
+  rules:
+    - changes:
+        - k8s/**/*
+  script:
+    - echo "Validating Kubernetes manifests..."
+    - kubectl apply --dry-run=client -f k8s/deployment.yaml
+    - kubectl apply --dry-run=client -f k8s/service.yaml
+    - kubectl apply --dry-run=client -f k8s/ingress.yaml
+    - echo "All k8s manifests are valid"
