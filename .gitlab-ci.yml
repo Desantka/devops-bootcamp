@@ -7,13 +7,12 @@ workflow:
 stages:
   - info
   - report
+  - validate
   - build
 
 include:
   - local: 'ci/defaults.yml'
+  - local: 'ci/jobs-k8s.yml'
   - local: 'ci/jobs-info.yml'
   - local: 'ci/jobs-report.yml'
   - local: 'ci/jobs-docker.yml'
-
-
-
