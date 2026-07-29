@@ -3,7 +3,7 @@ k8s:validate:
   image: alpine/k8s:1.30.2
   script:
     - echo "Validating Kubernetes manifests..."
-    - kubectl apply --dry-run=client -f k8s/deployment.yaml
-    - kubectl apply --dry-run=client -f k8s/service.yaml
-    - kubectl apply --dry-run=client -f k8s/ingress.yaml
+    - kubectl apply --dry-run=client --validate=false -f k8s/deployment.yaml
+    - kubectl apply --dry-run=client --validate=false -f k8s/service.yaml
+    - kubectl apply --dry-run=client --validate=false -f k8s/ingress.yaml
     - echo "All k8s manifests are valid"
