@@ -17,5 +17,17 @@ spec:
           image: registry.gitlab.com/liana-group/liana-project:4f7abdb9
           ports:
             - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
       imagePullSecrets:
         - name: gitlab-regcred
